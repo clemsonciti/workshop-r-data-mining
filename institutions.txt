@@ -1,0 +1,22 @@
+Institutions,FICE
+Arizona State University-Tempe,1081
+Clemson University,3425
+Georgia State University,1574
+Indiana University-Bloomington,1809
+Pennsylvania State University-Main Campus,8813
+SUNY at Albany,2835
+Texas Tech University,3644
+The University of Texas at Arlington,3656
+The University of Texas at Austin,3658
+University of Arkansas,1108
+University of California-Riverside,1316
+University of California-Santa Barbara,1320
+University of Colorado Boulder,1370
+University of Delaware,1431
+University of Houston,3652
+University of Massachusetts-Amherst,2221
+University of Nebraska-Lincoln,2565
+University of North Texas,3594
+University of Oklahoma-Norman Campus,8807
+University of Oregon,3223
+University of Wisconsin-Milwaukee,3896
