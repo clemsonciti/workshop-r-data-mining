@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#PBS -N data_mining
+#PBS -l select=1:ncpus=8:mem=8gb
+#PBS -l walltime=00:30:00
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+
+rm -Rf data/*
+chmod 755 mine_institutions.R 
+./mine_institutions.R institutions.txt
