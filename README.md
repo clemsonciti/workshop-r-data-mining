@@ -5,7 +5,7 @@ Welcome to Clemson University's Cyberinfrastructure and Technology Integration T
 This workshop focuses on data mining techniques in R, with the following learning objectives:
 
 - Understand data acquisition: downloading from static links, crawling through entire websites, and streaming data from real-time sources
-- Understand data curation: parsing unstructured/semi-structured data (text, XML, JSON, ...) into structured format
+- Understand data curation: parsing semi-structured online data (XML, JSON, ...) into structured format
 - Understand data management: organizing data directories, working with databases
 - Understand HPC concepts: automating data-mining process through the Palmetto Supercomputer
 
@@ -16,6 +16,8 @@ in the following workshops:
 - [Introduction to Research Computing](https://github.com/clemsonciti/hpc-workshop)
 - [Introduction to Data Science using R](https://github.com/clemsonciti/data-science-r-01)
 
+
+## Important!
 
 Prior to coming to the workshop, please make sure that you have completed the 
 **[preparation steps](https://github.com/clemsonciti/data-mining-r-workshop/blob/master/0_preparations.ipynb)** 
