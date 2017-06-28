@@ -15,12 +15,12 @@
 ## Where am I?
 
 
-```python
+```{r}
 !ls
 ```
 
 
-```python
+```{r}
 %%writefile mine_institutions.R
 #!/usr/bin/env /usr/local/share/jupyterhub/env/R/lib/R/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
@@ -72,7 +72,7 @@ for (i in 1:nrow(df_institutions)){
 ```
 
 
-```python
+```{r}
 %%writefile mining.pbs
 #!/bin/bash
 
@@ -89,28 +89,28 @@ chmod 755 mine_institutions.R
 ```
 
 
-```python
+```{r}
 !pwd
 ```
 
 
-```python
+```{r}
 !ssh user001 'cd /home/lngo/git/data-mining-r-workshop; qsub mining.pbs'
 ```
 
 
-```python
+```{r}
 !qstat -anu lngo
 ```
 
 
-```python
+```{r}
 !ls
 ```
 
 You can observe the output of your job here by viewing the file with the naming pattern `data_mining.oXXXXXXX`. The `XXXXXXX` number should match with the number string in the job ID. 
 
 
-```python
+```{r}
 !cat data_mining.o1837024
 ```

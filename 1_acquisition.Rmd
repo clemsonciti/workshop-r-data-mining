@@ -21,7 +21,7 @@ We are looking at a list of academic institutions from the Carnegie Classificati
 
 The list of institutions is available at https://raw.githubusercontent.com/clemsonciti/data-mining-r-workshop/master/institutions.txt
 
-** Create data directory **
+## Create data directory ##
 
 ```{r}
 current_dir <- getwd()
@@ -34,7 +34,7 @@ if (!file.exists(data_dir)){
 }
 ```
 
-** Download data from static link **
+## Download data from static link ##
 
 ```{r}
 institutions <- file.path(current_dir, data_dir, "institutions.csv")
@@ -51,7 +51,7 @@ df_institutions <- read.csv(institutions)
 head(df_institutions)
 ```
 
-** Automate the process with multiple static links **
+*Automate the process with multiple static links*
 
 Most website's itemized contents (i.e., pages, list of items, etc.) are designed with listing patterns in mind. By identifying and extracting these patterns, it is possible to automate the data acquisition process. 
 
@@ -68,14 +68,14 @@ Example 2:
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=60
 - ....
 
-** Data Management **
+*Data Management*
 
 You are about to download a bunch of files to your workstation. How are you going to organize the new data files?
 
 - Directory and file's names should provide metadata knowledge and serve as an easy way to categorize contents
 - Spaces and special characters in names should be avoided at all cost
 
-** names including data sources: lengthy but meaningful and maintainable **
+*Names including data sources: lengthy but meaningful and maintainable*
 
 ```{r}
 ncses_institution_profiles_dir <- 'ncses_institution_profiles'
@@ -100,7 +100,7 @@ for (i in 1:nrow(df_institutions)){
 The previous links are just HTML pages. We need to identify the download URL of the data files. For example:
 - https://ncsesdata.nsf.gov/profiles/site?method=download&fice=1081
 
-**  how to name your downloaded file? Institution Name or FICE? **
+*How to name your downloaded file? Institution Name or FICE?*
 
 - Why not BOTH?
 - How to name your files' extension?
@@ -113,7 +113,7 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
-** Spaces in the file names! Spaces in the file names! **
+*Spaces in the file names! Spaces in the file names!*
 
 ```{r}
 
@@ -124,7 +124,7 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
-** We are really downloading the files now, and also cleaning up the file names **
+*We are really downloading the files now, and also cleaning up the file names*
 
 ```{r}
 url_prefix <- 'https://ncsesdata.nsf.gov/profiles/site?method=download&fice='
@@ -144,7 +144,7 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
-** Unzipped downloaded data **
+*Unzipped downloaded data*
 
 - Separate data collection from data processing to avoid confusion (i.e., disrupted download)
 - Retain all data
@@ -159,41 +159,44 @@ if (!file.exists(file.path(data_dir, ncses_institution_unzipped_dir))){
     print ("Directory already exists")
 }
 
+list_zipped_files <- list.files(file.path(data_dir, ncses_institution_profiles_dir),
+                                full.names = TRUE)
+zipped_files_names <- list.files(file.path(data_dir, ncses_institution_profiles_dir))
 
+for (i in 1:length(list_zipped_files)){
+  unzip(list_zipped_files[i], exdir = file.path(data_dir, ncses_institution_unzipped_dir,
+                                                zipped_files_names[i]) )
+}
 ```
 
-### Collecting Streaming Data (RSS feeds, Twitter)
+*Open and combine XLS data*
+
+## Collecting Streaming Data (RSS feeds, Twitter)
 
 - feedeR for RSS feeds: https://cran.r-project.org/web/packages/feedeR/feedeR.pdf
 - rtweet for Twitter data: https://cran.r-project.org/web/packages/rtweet/rtweet.pdf
 
-** Streaming RSS feeds **
-
+*Streaming RSS feeds*
 
 ```{r}
 library(feedeR)
 ```
 
-
 ```{r}
 reddit_feed <- feed.extract("https://www.reddit.com/r/all/new/.rss")
 ```
-
 
 ```{r}
 str(reddit_feed)
 ```
 
-
 ```{r}
 str(reddit_feed$items)
 ```
 
-
 ```{r}
 reddit_feed$items
 ```
-
 
 ```{r}
 for (i in 1:10){
@@ -206,18 +209,14 @@ for (i in 1:10){
 
 ** Streaming Twitter feeds **
 
-
 ```{r}
 library(rtweet)
-
 clemson_tweets <- stream_tweets(q = 'Clemson,clemson,ClemsonTiger', timeout = 120)
 ```
-
 
 ```{r}
 str(clemson_tweets)
 ```
-
 
 ```{r}
 clemson_tweets
