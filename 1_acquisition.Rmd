@@ -6,30 +6,7 @@
 
 ## Where am I?
 
-
-```R
-getwd()
-```
-
-
-'/home/lngo/git/data-mining-r-workshop'
-
-
-
-```R
-setwd("/home/lngo/data-mining-r/")
-```
-
-
-    Error in setwd("/home/lngo/data-mining-r/"): cannot change working directory
-    Traceback:
-    
-
-    1. setwd("/home/lngo/data-mining-r/")
-
-
-
-```R
+```{r}
 getwd()
 ```
 
@@ -44,10 +21,9 @@ We are looking at a list of academic institutions from the Carnegie Classificati
 
 The list of institutions is available at https://raw.githubusercontent.com/clemsonciti/data-mining-r-workshop/master/institutions.txt
 
-### Create data directory
+** Create data directory **
 
-
-```R
+```{r}
 current_dir <- getwd()
 data_dir <- 'data'
 
@@ -58,53 +34,50 @@ if (!file.exists(data_dir)){
 }
 ```
 
-### Download data from static link
+** Download data from static link **
 
-
-
-
-```R
+```{r}
 institutions <- file.path(current_dir, data_dir, "institutions.csv")
 institutions_url <- 'https://raw.githubusercontent.com/clemsonciti/data-mining-r-workshop/master/institutions.txt'
 
 download.file(institutions_url, institutions)
 ```
 
-
-```R
+```{r}
 df_institutions <- read.csv(institutions)
 ```
 
-
-```R
+```{r}
 head(df_institutions)
 ```
 
-### Automate the process with multiple static links
+** Automate the process with multiple static links **
 
-Most website's itemized contents (i.e., pages, list of items, etc.) are designed with listing patterns in mind. By identifying and extracting these patterns, it is possible to automate the data acquisition process
+Most website's itemized contents (i.e., pages, list of items, etc.) are designed with listing patterns in mind. By identifying and extracting these patterns, it is possible to automate the data acquisition process. 
 
-** Example 1 **
+ Example 1:
+ 
 - https://ncsesdata.nsf.gov/profiles/site?method=view&fice=3963
 - https://ncsesdata.nsf.gov/profiles/site?method=view&fice=1081
 
-** Example 2 **
+Example 2: 
+
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=20
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=40
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=60
 - ....
 
-### Data Management
+** Data Management **
 
 You are about to download a bunch of files to your workstation. How are you going to organize the new data files?
 
 - Directory and file's names should provide metadata knowledge and serve as an easy way to categorize contents
 - Spaces and special characters in names should be avoided at all cost
 
+** names including data sources: lengthy but meaningful and maintainable **
 
-```R
-# names including data sources: lengthy but meaningful and maintainable
+```{r}
 ncses_institution_profiles_dir <- 'ncses_institution_profiles'
 
 if (!file.exists(file.path(data_dir, ncses_institution_profiles_dir))){
@@ -116,7 +89,7 @@ if (!file.exists(file.path(data_dir, ncses_institution_profiles_dir))){
 ```
 
 
-```R
+```{r}
 url_prefix <- 'https://ncsesdata.nsf.gov/profiles/site?method=view&fice='
 for (i in 1:nrow(df_institutions)){
     full_url <- paste(url_prefix, df_institutions$FICE[i],sep='')
@@ -127,20 +100,23 @@ for (i in 1:nrow(df_institutions)){
 The previous links are just HTML pages. We need to identify the download URL of the data files. For example:
 - https://ncsesdata.nsf.gov/profiles/site?method=download&fice=1081
 
+**  how to name your downloaded file? Institution Name or FICE? **
 
-```R
-# how to name your downloaded file? Institution Name or FICE?
-# Why not BOTH?
-# How to name your files' extension?
+- Why not BOTH?
+- How to name your files' extension?
+
+```{r}
+
 for (i in 1:nrow(df_institutions)){    
     institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],'.zip',sep='_')
     print(institution)
 }
 ```
 
+** Spaces in the file names! Spaces in the file names! **
 
-```R
-# Spaces in the file names! Spaces in the file names!
+```{r}
+
 for (i in 1:nrow(df_institutions)){    
     institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],'.zip',sep='_')
     institution <- gsub(" ", "_", institution, fixed = TRUE)
@@ -148,11 +124,9 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
-*Why do we replace spaces with an underscore?*
+** We are really downloading the files now, and also cleaning up the file names **
 
-
-```R
-# We are really downloading the files now, and also cleaning up the file names ...
+```{r}
 url_prefix <- 'https://ncsesdata.nsf.gov/profiles/site?method=download&fice='
 for (i in 1:nrow(df_institutions)){
     full_url <- paste(url_prefix, df_institutions$FICE[i],sep='')
@@ -170,6 +144,24 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
+** Unzipped downloaded data **
+
+- Separate data collection from data processing to avoid confusion (i.e., disrupted download)
+- Retain all data
+
+```{r}
+ncses_institution_unzipped_dir <- 'ncses_institution_profiles_unzipped'
+
+if (!file.exists(file.path(data_dir, ncses_institution_unzipped_dir))){
+    dir.create(file.path(data_dir, ncses_institution_unzipped_dir))
+    print ('Create directory ncses_institution_profiles_unzipped under data')
+} else {
+    print ("Directory already exists")
+}
+
+
+```
+
 ### Collecting Streaming Data (RSS feeds, Twitter)
 
 - feedeR for RSS feeds: https://cran.r-project.org/web/packages/feedeR/feedeR.pdf
@@ -178,32 +170,32 @@ for (i in 1:nrow(df_institutions)){
 ** Streaming RSS feeds **
 
 
-```R
+```{r}
 library(feedeR)
 ```
 
 
-```R
+```{r}
 reddit_feed <- feed.extract("https://www.reddit.com/r/all/new/.rss")
 ```
 
 
-```R
+```{r}
 str(reddit_feed)
 ```
 
 
-```R
+```{r}
 str(reddit_feed$items)
 ```
 
 
-```R
+```{r}
 reddit_feed$items
 ```
 
 
-```R
+```{r}
 for (i in 1:10){
     reddit_feed <- feed.extract("https://www.reddit.com/r/all/new/.rss")
     print(reddit_feed$updated)
@@ -215,19 +207,19 @@ for (i in 1:10){
 ** Streaming Twitter feeds **
 
 
-```R
+```{r}
 library(rtweet)
 
 clemson_tweets <- stream_tweets(q = 'Clemson,clemson,ClemsonTiger', timeout = 120)
 ```
 
 
-```R
+```{r}
 str(clemson_tweets)
 ```
 
 
-```R
+```{r}
 clemson_tweets
 ```
 

@@ -35,3 +35,5 @@ vignettes/*.pdf
 # Temporary data
 data*
 .ipynb_checkpoints
+cert*
+.httr-oauth
