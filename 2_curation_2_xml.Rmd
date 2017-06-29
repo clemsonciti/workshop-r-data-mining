@@ -1,21 +1,15 @@
-
 # Learning Objectives
 
 - Understand data acquisition: downloading from static link
 - Understand data curation: working with hierarchically structured data (XML)
 
+## Clear environment
+
+```{r}
+rm(list = ls())
+```
+
 ## Where am I?
-
-
-```{r}
-getwd()
-```
-
-
-```{r}
-setwd("/home/lngo/data-mining-r/")
-```
-
 
 ```{r}
 getwd()
@@ -33,36 +27,33 @@ getwd()
 
 Package `XML` reads xml data into a tree structure that can be interpreted by external XML processing functions. 
 
-
 ```{r}
 library(xml2)
 ```
-
 
 ```{r}
 sample_xml <- read_xml('./samples/books.xml')
 ```
 
-
 ```{r}
 sample_xml
 ```
 
+```{r}
+str(sample_xml)
+```
 
 ```{r}
 xml_structure(sample_xml)
 ```
 
-
 ```{r}
 book_catalog <- as_list(sample_xml)
 ```
 
-
 ```{r}
 str(book_catalog)
 ```
-
 
 ```{r}
 summary(book_catalog)
@@ -79,7 +70,7 @@ stores_url <- 'https://data.ny.gov/api/views/9a8c-vfzj/rows.xml?accessType=DOWNL
 
 
 ```{r}
-download.file(stores_url,stores_file,method = "wget",quiet = TRUE)
+download.file(stores_url,stores_file, quiet = TRUE)
 ```
 
 
@@ -221,7 +212,3 @@ For complex XML data, the recommended approach is to use [XPath Query Language](
 - node/@attr = value of attribute `attr` in node that has such attributes. 
 
 XPAth queries can be used with package xml2's `xml_path` function to describe operations on specific XML data elements whose tags and attributes match the query patterns
-
-### 3. Download and process HTML pages
-
-### 4. Process text data

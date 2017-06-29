@@ -1,10 +1,10 @@
 
-## 1. Installing packages: `feedeR`, `rtweet`, `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`
+## 1. Installing packages: `feedeR`, `rtweet`, `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`
 
 Inside the R prompt, run the following command
 
 ```{r}
-package_list <- c('feedeR','XML','rtweet','RCurl','xml2','RJSONIO','RSQLite','stringr')
+package_list <- c('feedeR','XML','rtweet','RCurl','xml2','RJSONIO','RSQLite','stringr','readxl')
 install.packages(package_list)
 ```
 
@@ -20,6 +20,7 @@ library(xml2)
 library(RJSONIO)
 library(RSQLite)
 library(stringr)
+library(readxl)
 sessionInfo()
 ```
 

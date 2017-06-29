@@ -1,8 +1,12 @@
-
 # Learning Objectives:
 
 - Understand data acquisition: downloading from static links, crawling through entire websites, and streaming data from real-time sources
 - Understand data management: organizing data directories
+
+## Clear environment:
+```{r}
+rm (list = ls())
+```
 
 ## Where am I?
 
@@ -170,6 +174,106 @@ for (i in 1:length(list_zipped_files)){
 ```
 
 *Open and combine XLS data*
+
+Looking at the unzipped contents for each institution to identify commonalities in:
+
+- File names
+- Data structures
+
+```{r}
+library(readxl)
+temp_1 <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[1], 'f11081.xls'))
+temp_2 <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[2], 'f11108.xls'))
+```
+
+Check for structural similarity (visually most of the time)
+
+```{r}
+names(temp_1)
+names(temp_2)
+```
+
+Loop through all data to confirm similarity
+
+```{r}
+df_institutions <- df_institutions[order(df_institutions$FICE),]
+```
+
+```{r}
+for (i in 1:length(list_zipped_files)){
+  temp_df <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[i],
+                             paste0('f1',df_institutions$FICE[i],'.xls')))
+  print(nrow(temp_df))
+}
+```
+
+If data error is identified, then we isolate error. 
+
+```{r}
+for (i in 1:length(list_zipped_files)){
+  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[i],
+                             paste0('f1',df_institutions$FICE[i],'.xls')))},
+                      error = function(e) {
+                        return (paste0("Error loading file at: ", df_institutions[i,]))
+                      })
+  print(nrow(temp_df))
+}
+```
+
+Fix error message
+
+```{r}
+for (i in 1:length(list_zipped_files)){
+  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[i],
+                             paste0('f1',df_institutions$FICE[i],'.xls')))},
+                      error = function(e) {
+                        return (paste0("Error loading file at: ", df_institutions[i,]))
+                      })
+  if (!is.null(nrow(temp_df))){
+    print(nrow(temp_df))
+  } else {
+    print(temp_df)
+  }
+}
+```
+
+Check header consistency
+
+```{r}
+for (i in 1:length(list_zipped_files)){
+  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
+                             zipped_files_names[i],
+                             paste0('f1',df_institutions$FICE[i],'.xls')))},
+                      error = function(e) {
+                        return (paste0("Error loading file at: ", df_institutions[i,]))
+                      })
+  if (!is.null(nrow(temp_df))){
+    print((temp_df[3,]))
+  } else {
+    print(temp_df)
+  }
+}
+```
+
+** Challenge **
+
+- Check consistency of first column
+
+```{r}
+
+```
+
+- If there are too many data file that a visual check is not feasible, how can you check for
+header row consistency?
+
+```{r}
+
+```
 
 ## Collecting Streaming Data (RSS feeds, Twitter)
 

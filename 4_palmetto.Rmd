@@ -3,25 +3,9 @@
 
 - Understand HPC concepts: automating data-mining process through the Palmetto Supercomputer
 
-** Python cell magic: **
-
-- Specify at top of cell
-- Prefixed by %%
-- Enable functionality on cell' contents
-
-** writefile: **
-- %%writefile *path-to-filename*
-
-## Where am I?
-
+- Create a file named mine_institutions.R
 
 ```{r}
-!ls
-```
-
-
-```{r}
-%%writefile mine_institutions.R
 #!/usr/bin/env /usr/local/share/jupyterhub/env/R/lib/R/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
 
@@ -71,9 +55,9 @@ for (i in 1:nrow(df_institutions)){
 }
 ```
 
+- Create a file named mine_institutions.pbs
 
-```{r}
-%%writefile mining.pbs
+```{bash}
 #!/bin/bash
 
 #PBS -N data_mining
@@ -88,29 +72,12 @@ chmod 755 mine_institutions.R
 ./mine_institutions.R institutions.txt
 ```
 
+- Upload the previous files onto Palmetto
+- From `login001`, submit the script
 
-```{r}
-!pwd
-```
-
-
-```{r}
-!ssh user001 'cd /home/lngo/git/data-mining-r-workshop; qsub mining.pbs'
-```
-
-
-```{r}
-!qstat -anu lngo
-```
-
-
-```{r}
-!ls
+```{bash}
+$ qsub min_institutions.pbs
+$ qstat -anu $USER
 ```
 
 You can observe the output of your job here by viewing the file with the naming pattern `data_mining.oXXXXXXX`. The `XXXXXXX` number should match with the number string in the job ID. 
-
-
-```{r}
-!cat data_mining.o1837024
-```
