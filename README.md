@@ -20,5 +20,5 @@ in the following workshops:
 ## Important!
 
 Prior to coming to the workshop, please make sure that you have completed the 
-**[preparation steps](https://github.com/clemsonciti/data-mining-r-workshop/blob/master/0_preparations.ipynb)** 
+**[preparation steps](https://github.com/clemsonciti/data-mining-r-workshop/blob/master/0_preparations.Rmd)** 
 to set up the required libraries and Twitter streaming authentication tokens. 
