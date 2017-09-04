@@ -104,6 +104,9 @@ for (i in 1:nrow(df_institutions)){
 The previous links are just HTML pages. We need to identify the download URL of the data files. For example:
 - https://ncsesdata.nsf.gov/profiles/site?method=download&fice=1081
 
+We will be using Github files instead, as we do not want to crash nsf.gov. 
+- https://github.com/clemsonciti/data-mining-r-workshop/raw/master/samples/ncses_institution_profiles/1081.zip
+
 *How to name your downloaded file? Institution Name or FICE?*
 
 - Why not BOTH?
@@ -131,9 +134,9 @@ for (i in 1:nrow(df_institutions)){
 *We are really downloading the files now, and also cleaning up the file names*
 
 ```{r}
-url_prefix <- 'https://ncsesdata.nsf.gov/profiles/site?method=download&fice='
+url_prefix <- 'https://github.com/clemsonciti/data-mining-r-workshop/raw/master/samples/ncses_institution_profiles/'
 for (i in 1:nrow(df_institutions)){
-    full_url <- paste(url_prefix, df_institutions$FICE[i],sep='')
+    full_url <- paste(url_prefix, df_institutions$FICE[i], '.zip', sep='')
     institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],sep='_')
     institution <- gsub(" ", "_", institution, fixed = TRUE)
     institution <- paste(institution,'.zip',sep='')
@@ -311,7 +314,7 @@ for (i in 1:10){
 }
 ```
 
-** Streaming Twitter feeds **
+*Streaming Twitter feeds (Optional)*
 
 ```{r}
 library(rtweet)
@@ -326,7 +329,7 @@ str(clemson_tweets)
 clemson_tweets
 ```
 
-** Question to be considered: **
+**Question to be considered:**
 - What is the rate of data acquisition?
 - Am I loosing data?
 - Am I duplicating data?
