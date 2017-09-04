@@ -1,5 +1,5 @@
 
-## 1. Installing packages: `feedeR`, `rtweet`, `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`
+## 1. Installing packages: `feedeR`, `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`
 
 Inside the R prompt, run the following command
 
@@ -13,7 +13,6 @@ You can test that all packages are installed and usable by load them all and che
 
 ```{r}
 library(feedeR)
-library(rtweet)
 library(RCurl)
 library(XML)
 library(xml2)
@@ -24,9 +23,16 @@ library(readxl)
 sessionInfo()
 ```
 
-## 2. Setup `rtweet` for streaming Twitter data
+## 2. Setup `rtweet` for streaming Twitter data (optional)
 
 - This section is based on instructions provided at https://mkearney.github.io/rtweet/articles/auth.html
+- Install `rtweet`:
+
+```{r}
+install.packages('rtweet')
+library(rtweet)
+sessionInfo()
+```
 
 ** 2.1. Creating Twitter account **
 
