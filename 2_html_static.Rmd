@@ -2,8 +2,6 @@
 
 - Understand data acquisition: crawling through entire websites
 - Understand data curation: working with hierarchically structured data (HTML)
-- Understand data management: working with databases
-
 
 ## Clear environment
 
@@ -17,32 +15,7 @@ rm(list = ls())
 getwd()
 ```
 
-### 3. [SQLite](http://sqlite.org/)
-
-- "Self-contained, high-reliability, embedded, full-featured, public-domain, SQL database engine"
-- "The most-used database engine in the world"
-
-Package `XML` reads xml data into a tree structure that can be interpreted by external XML processing functions. 
-
-```{r}
-library(DBI)
-library(RSQLite)
-```
-
-
-```{r}
-db_name <- file.path('data','yelp.sqlite')
-```
-
-```{r}
-conn <- dbConnect(SQLite(), db_name)
-```
-
-```{r}
-dbDisconnect(conn)
-```
-
-With a back-end database, now we can turn back to mining online data. We will be using Yelp in this example. 
+We will be using Yelp in this module:
 
 Recaling Yelp's URL patterns from notebook 1:
 - https://www.yelp.com/biz/emerils-new-orleans-new-orleans
@@ -209,189 +182,60 @@ for (i in 1:page_count){
     }
     start_index <- start_index + 20
     url_suffix <- paste0('?start=',start_index)
+    
+    # be courteous to your source:
+    sleep_time <- sample(2:6,1)
+    print (sleep_time)
+    Sys.sleep(sleep_time)
 }
 print (unique(list_authors))
 ```
 
-The crawling process seems to work properly. Now we can start looking at how acquired data can be inserted into the SQLite database.
 
-**Step 1: Establish connection to backend SQLite database**
+** Challenge **
 
+Mine data for The Smokin Pig (6630 Hwy 76, Pendleton SC) and answer the following questions:
 
-```{r}
-db_name <- file.path('data','yelp.sqlite')
-db_conn <- dbConnect(SQLite(), db_name)
-```
-
-**Step 2: Create new table in database **
+- How many reviews are there into total for this restaurant?
+- What is the average rating for The Smokin Pig?
 
 
 ```{r}
-if (!dbExistsTable(db_conn, 'Emerils')){
-    dbSendQuery(conn = db_conn,
-                'CREATE TABLE Emerils (Author TEXT, ReviewDate TEXT, ReviewRating INTEGER, ReviewText TEXT)')
-}
-```
-
-**Step 3: Check that table is created properly**
-
-
-```{r}
-dbListTables(db_conn)              # The tables in the database
-```
-
-
-```{r}
- dbListFields(db_conn, 'Emerils')    # The columns in a table
-```
-
-
-```{r}
- dbReadTable(db_conn, 'Emerils')     # The data in a table
-```
-
-**Step 4: Test data insertion for a single page**
-
-- Test data frame to be inserted
-
-
-```{r}
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
+url_prefix <- '____________________________'
 url_suffix <- ''
 start_index <- 0
+rating_sum <- 0
+rating_count <- 0
 
-for (i in 1:2){
+current_review <- read_html(url_prefix)
+page_info <- xml_find_first(current_review, "//div[@class='page-of-pages arrange_unit arrange_unit--fill']")
+text_page_count <- xml_text(page_info, trim=TRUE)
+page_count <- as.numeric(strsplit(text_page_count," ")[[1]][4])
+
+for (i in 1:___){
     url_current <- paste(url_prefix, url_suffix, sep='')
     current_page <- read_html(url_current)
     current_revs <- xml_find_all(current_page, "//div[@itemprop='review']")
+    
     list_revs <- as_list(current_revs)
     count_revs <- length(list_revs)
     print (url_current)
     print (paste0('Page ', i, ' has ', count_revs, ' reviews.'))
-    df_current_page <- data.frame(Author=character(count_revs),
-                                  ReviewDate=character(count_revs),
-                                  ReviewRating=numeric(count_revs),
-                                  ReviewText=character(count_revs), stringsAsFactors=FALSE)
+    
     for (j in 1:count_revs){
-        author_name <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 1] <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 2] <- attr(list_revs[[j]][[5]],'content')
-        df_current_page[j, 3] <- as.numeric(attr(list_revs[[j]][[3]][[2]],'content'))
-        review_text <- list_revs[[j]][[6]][[1]]
-        df_current_page[j, 4] <- trimws(gsub('\r\n','',review_text))
+        rating <- attr(list_revs[[j]][[___]][[___]],'content')
+        rating_sum <- ______
+        rating_count <- rating_count + 1
     }
     start_index <- start_index + 20
     url_suffix <- paste0('?start=',start_index)
+    
+    # be courteous to your source:
+    sleep_time <- sample(2:6,1)
+    print (sleep_time)
+    Sys.sleep(sleep_time)
 }
-print (df_current_page)
-```
 
-- Test insertion process
-
-
-```{r}
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
-url_suffix <- ''
-start_index <- 0
-
-for (i in 1:2){
-    url_current <- paste(url_prefix, url_suffix, sep='')
-    current_page <- read_html(url_current)
-    current_revs <- xml_find_all(current_page, "//div[@itemprop='review']")
-    list_revs <- as_list(current_revs)
-    count_revs <- length(list_revs)
-    print (url_current)
-    print (paste0('Page ', i, ' has ', count_revs, ' reviews.'))
-    df_current_page <- data.frame(Author=character(count_revs),
-                                  ReviewDate=character(count_revs),
-                                  ReviewRating=numeric(count_revs),
-                                  ReviewText=character(count_revs), stringsAsFactors=FALSE)
-    for (j in 1:count_revs){
-        author_name <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 1] <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 2] <- attr(list_revs[[j]][[5]],'content')
-        df_current_page[j, 3] <- as.numeric(attr(list_revs[[j]][[3]][[2]],'content'))
-        review_text <- list_revs[[j]][[6]][[1]]
-        df_current_page[j, 4] <- trimws(gsub('\r\n','',review_text))
-    }
-    
-    dbWriteTable(db_conn, 'tmp_reviews', df_current_page)
-    dbReadTable(db_conn, 'tmp_reviews')
-    rs <- dbSendStatement(db_conn,
-                          "INSERT INTO Emerils SELECT * FROM tmp_reviews;")
-    if (dbHasCompleted(rs)){
-        print ('Statement is completed')
-    }
-    
-    dbRemoveTable(db_conn, 'tmp_reviews')
-    start_index <- start_index + 20
-    url_suffix <- paste0('?start=',start_index)
-}
-dbReadTable(db_conn, 'Emerils')
-```
-
-**Step 5: Complete data mining process**
-
-
-```{r}
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
-url_suffix <- ''
-start_index <- 0
-
-for (i in 3:page_count){
-    url_current <- paste(url_prefix, url_suffix, sep='')
-    current_page <- read_html(url_current)
-    current_revs <- xml_find_all(current_page, "//div[@itemprop='review']")
-    list_revs <- as_list(current_revs)
-    count_revs <- length(list_revs)
-    print (url_current)
-    print (paste0('Page ', i, ' has ', count_revs, ' reviews.'))
-    df_current_page <- data.frame(Author=character(count_revs),
-                                  ReviewDate=character(count_revs),
-                                  ReviewRating=numeric(count_revs),
-                                  ReviewText=character(count_revs), stringsAsFactors=FALSE)
-    for (j in 1:count_revs){
-        author_name <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 1] <- attr(list_revs[[j]][[2]],'content')
-        df_current_page[j, 2] <- attr(list_revs[[j]][[5]],'content')
-        df_current_page[j, 3] <- as.numeric(attr(list_revs[[j]][[3]][[2]],'content'))
-        review_text <- list_revs[[j]][[6]][[1]]
-        df_current_page[j, 4] <- trimws(gsub('\r\n','',review_text))
-    }
-    
-    dbWriteTable(db_conn, 'tmp_reviews', df_current_page)
-    dbReadTable(db_conn, 'tmp_reviews')
-    rs <- dbSendStatement(db_conn,
-                          "INSERT INTO Emerils SELECT * FROM tmp_reviews;")
-    if (dbHasCompleted(rs)){
-        print ('Statement is completed')
-    }
-    
-    dbRemoveTable(db_conn, 'tmp_reviews')
-    start_index <- start_index + 20
-    url_suffix <- paste0('?start=',start_index)
-}
-```
-
-**Step 6: Validation**
-
-
-```{r}
-rs_1 <- dbSendQuery(db_conn, 'SELECT Count(*) FROM Emerils')
-print (dbFetch(rs_1))
-dbClearResult(rs_1)
-
-
-rs_2 <- dbSendQuery(db_conn, "SELECT * FROM Emerils")
-df_test <- dbFetch(rs_2, 10)
-print (df_test)
-dbClearResult(rs_2)
-```
-
-**Step 7: Cleanup**
-Remember to properly close the connection to your SQLite database (to close the file)
-
-
-```{r}
-dbDisconnect(db_conn)
+avg_rating <- ______
+print (paste0('Average Rating: ',avg_rating))
 ```

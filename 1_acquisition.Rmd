@@ -104,9 +104,6 @@ for (i in 1:nrow(df_institutions)){
 The previous links are just HTML pages. We need to identify the download URL of the data files. For example:
 - https://ncsesdata.nsf.gov/profiles/site?method=download&fice=1081
 
-We will be using Github files instead, as we do not want to crash nsf.gov. 
-- https://github.com/clemsonciti/data-mining-r-workshop/raw/master/samples/ncses_institution_profiles/1081.zip
-
 *How to name your downloaded file? Institution Name or FICE?*
 
 - Why not BOTH?
@@ -125,211 +122,50 @@ for (i in 1:nrow(df_institutions)){
 ```{r}
 
 for (i in 1:nrow(df_institutions)){    
-    institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],'.zip',sep='_')
+    institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],sep='_')
     institution <- gsub(" ", "_", institution, fixed = TRUE)
+    institution <- paste(institution,'.zip',sep='')
     print(institution)
 }
 ```
 
+** Challenge **
+
+We will be downloading using Github files instead, as we do not want to crash nsf.gov. We store the institutions' profile data at
+https://github.com/clemsonciti/data-mining-r-workshop/tree/master/samples/ncses_institution_profiles
+
+1. What are the URLs to manually download profiles of 2221, 3594, and 8807?
+
+
+
+2. What is the corresponding URL prefix that is common for all profiles?
+
+
+
+3. Which data inside your R environment that cabe be used to construct the corresponding full URL
+
+
+
 *We are really downloading the files now, and also cleaning up the file names*
 
 ```{r}
-url_prefix <- 'https://github.com/clemsonciti/data-mining-r-workshop/raw/master/samples/ncses_institution_profiles/'
+url_prefix <- '_____________________________________'
+
 for (i in 1:nrow(df_institutions)){
-    full_url <- paste(url_prefix, df_institutions$FICE[i], '.zip', sep='')
+    full_url <- paste(url_prefix, ____________, '.zip', sep='')
+    
     institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],sep='_')
     institution <- gsub(" ", "_", institution, fixed = TRUE)
     institution <- paste(institution,'.zip',sep='')
     institution_path <- file.path(current_dir,data_dir, ncses_institution_profiles_dir, institution)
     print(full_url)
     print(institution_path)
-    download.file(full_url, institution_path, mode = "wb")
+    
+    download.file(_____, ______________, mode = "wb")
+    
     # be courteous to your source:
     sleep_time <- sample(2:6,1)
     print (sleep_time)
     Sys.sleep(sleep_time)
 }
 ```
-
-*Unzipped downloaded data*
-
-- Separate data collection from data processing to avoid confusion (i.e., disrupted download)
-- Retain all data
-
-```{r}
-ncses_institution_unzipped_dir <- 'ncses_institution_profiles_unzipped'
-
-if (!file.exists(file.path(data_dir, ncses_institution_unzipped_dir))){
-    dir.create(file.path(data_dir, ncses_institution_unzipped_dir))
-    print ('Create directory ncses_institution_profiles_unzipped under data')
-} else {
-    print ("Directory already exists")
-}
-
-list_zipped_files <- list.files(file.path(data_dir, ncses_institution_profiles_dir),
-                                full.names = TRUE)
-zipped_files_names <- list.files(file.path(data_dir, ncses_institution_profiles_dir))
-
-for (i in 1:length(list_zipped_files)){
-  unzip(list_zipped_files[i], exdir = file.path(data_dir, ncses_institution_unzipped_dir,
-                                                zipped_files_names[i]) )
-}
-```
-
-*Open and combine XLS data*
-
-Looking at the unzipped contents for each institution to identify commonalities in:
-
-- File names
-- Data structures
-
-```{r}
-library(readxl)
-temp_1 <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[1], 'f11081.xls'))
-temp_2 <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[2], 'f11108.xls'))
-```
-
-Check for structural similarity (visually most of the time)
-
-```{r}
-names(temp_1)
-names(temp_2)
-```
-
-Loop through all data to confirm similarity
-
-```{r}
-df_institutions <- df_institutions[order(df_institutions$FICE),]
-```
-
-```{r}
-for (i in 1:length(list_zipped_files)){
-  temp_df <- read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[i],
-                             paste0('f1',df_institutions$FICE[i],'.xls')))
-  print(nrow(temp_df))
-}
-```
-
-If data error is identified, then we isolate error. 
-
-```{r}
-for (i in 1:length(list_zipped_files)){
-  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[i],
-                             paste0('f1',df_institutions$FICE[i],'.xls')))},
-                      error = function(e) {
-                        return (paste0("Error loading file at: ", df_institutions[i,]))
-                      })
-  print(nrow(temp_df))
-}
-```
-
-Fix error message
-
-```{r}
-for (i in 1:length(list_zipped_files)){
-  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[i],
-                             paste0('f1',df_institutions$FICE[i],'.xls')))},
-                      error = function(e) {
-                        return (paste0("Error loading file at: ", df_institutions[i,]))
-                      })
-  if (!is.null(nrow(temp_df))){
-    print(nrow(temp_df))
-  } else {
-    print(temp_df)
-  }
-}
-```
-
-Check header consistency
-
-```{r}
-for (i in 1:length(list_zipped_files)){
-  temp_df <- tryCatch({read_xls(file.path(current_dir,data_dir,ncses_institution_unzipped_dir,
-                             zipped_files_names[i],
-                             paste0('f1',df_institutions$FICE[i],'.xls')))},
-                      error = function(e) {
-                        return (paste0("Error loading file at: ", df_institutions[i,]))
-                      })
-  if (!is.null(nrow(temp_df))){
-    print((temp_df[3,]))
-  } else {
-    print(temp_df)
-  }
-}
-```
-
-** Challenge **
-
-- Check consistency of first column
-
-```{r}
-
-```
-
-- If there are too many data file that a visual check is not feasible, how can you check for
-header row consistency?
-
-```{r}
-
-```
-
-## Collecting Streaming Data (RSS feeds, Twitter)
-
-- feedeR for RSS feeds: https://cran.r-project.org/web/packages/feedeR/feedeR.pdf
-- rtweet for Twitter data: https://cran.r-project.org/web/packages/rtweet/rtweet.pdf
-
-*Streaming RSS feeds*
-
-```{r}
-library(feedeR)
-```
-
-```{r}
-reddit_feed <- feed.extract("https://www.reddit.com/r/all/new/.rss")
-```
-
-```{r}
-str(reddit_feed)
-```
-
-```{r}
-str(reddit_feed$items)
-```
-
-```{r}
-reddit_feed$items
-```
-
-```{r}
-for (i in 1:10){
-    reddit_feed <- feed.extract("https://www.reddit.com/r/all/new/.rss")
-    print(reddit_feed$updated)
-    print(reddit_feed$items[1]$title[1])
-    print(reddit_feed$items[3]$link[1])
-}
-```
-
-*Streaming Twitter feeds (Optional)*
-
-```{r}
-library(rtweet)
-clemson_tweets <- stream_tweets(q = 'Clemson,clemson,ClemsonTiger', timeout = 120)
-```
-
-```{r}
-str(clemson_tweets)
-```
-
-```{r}
-clemson_tweets
-```
-
-**Question to be considered:**
-- What is the rate of data acquisition?
-- Am I loosing data?
-- Am I duplicating data?
