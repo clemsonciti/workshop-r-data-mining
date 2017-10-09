@@ -1,10 +1,10 @@
 
-## 1. Installing packages: `feedeR`, `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`
+## 1. Installing packages: `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`, `rvest`
 
 Inside the R prompt, run the following command
 
 ```{r}
-package_list <- c('feedeR','XML','rtweet','RCurl','xml2','RJSONIO','RSQLite','stringr','readxl')
+package_list <- c('XML','rtweet','RCurl','xml2','RJSONIO','RSQLite','stringr','readxl')
 install.packages(package_list)
 ```
 
@@ -12,7 +12,6 @@ You can test that all packages are installed and usable by load them all and che
 
 
 ```{r}
-library(feedeR)
 library(RCurl)
 library(XML)
 library(xml2)
@@ -23,76 +22,21 @@ library(readxl)
 sessionInfo()
 ```
 
-## 2. Setup `rtweet` for streaming Twitter data (optional)
-
-- This section is based on instructions provided at https://mkearney.github.io/rtweet/articles/auth.html
-- Install `rtweet`:
+## 2. Download PhantomJS:
 
 ```{r}
-install.packages('rtweet')
-library(rtweet)
-sessionInfo()
-```
-
-** 2.1. Creating Twitter account **
-
-- Sign up for a Twitter account at https://twitter.com
-- Make sure that your account has an associated phone number. This is required to make your Twitter account into a developer account (being able to create app)
-
-** 2.2. Creating Twitter app **
-
-- Go to https://apps.twitter.com and sign in with your Twitter account
-- Create an application:
-  - Application names are unique, you will need to pick a different name from R_Workshop_Clemson
-  - Some descriptions are required, it is just to describe what your application will do
-  - The website is required, but you do not have to provide a specific website. You only need to provide a place holder URL that is in the correct format. 
-  - The Callback URL must be http://127.0.0.1:1410
-- Once the Twitter app is created, you will be able to click on the app's name on the front page of https://apps.twitter.com to go to the Application Management page. Select the **Keys and Access Tokens** tab to see your access tokens. You will need the **Consumer Key (API Key)** and **Consumer Secret (API Secret)** strings as shown in this tab for the next steps. 
-
-** 2.3. Setting up Twitter security token for R's rtweet package: **
-
-- Continue in the same command line terminal from step 1, type in the following R codes
-
-```{r}
-appname <- "R_Workshop_Clemson"
-key <- "1EnhV4LwxFJFHms5xBu9H3vvn"
-secret <- "7FtYMVQqlO7d1Hd1F8QDkhiuHDYvlhw4gpGhKb4P6Pug3Zicqz"
-twitter_token <- create_token(app = appname,
-                              consumer_key = key,
-                              consumer_secret = secret)
-```
-
-- After these R commands are executed, a browser will pop up asking you to sign in and authenticate the access token, and the R environment will print the following lines while waiting for the authentication:
-
-```
-Waiting for authentication in browser...
-Press Esc/Ctrl + C to abort
-```
-
-- Click on the blue **Authorize App** button to confirm the authorization. This will take you to a web page that has the lines *Authentication complete. Please close this page and return to R*. You can now close the Firefox browser. The R environment will print out the line *Authentication complete* and escape from waiting mode into the normal R prompt. 
-
-** 2.4. Saving Twitter security token for future usage: **
-
-The `twitter_token` variable should be saved to a file after step 2.3 is completed so that it can be reused later. The process is as follows:
-
-- Continuing in the same R command line terminal as step 2.3, execute the followings:
-
-```{r}
-home_dir <- Sys.getenv('R_USER')
-current_dir <- getwd()
-cert_dir <- 'cert'
-
-if (!file.exists(cert_dir)){
-    dir.create(file.path(current_dir, cert_dir))
+if (!file.exists(file.path('bin'))){
+    dir.create(file.path('bin'))
+    print ('Create bin directory')
 } else {
     print ("Directory already exists")
 }
-  
-file_name <- file.path(current_dir, cert_dir, "twitter_token.rds")
-saveRDS(twitter_token, file = file_name)
-cat(paste0("TWITTER_PAT=", file_name),file = file.path(home_dir, ".Renviron"),append = TRUE)
-```
 
-- The above codes will save the `twitter_token` variable into the `twitter_token.rds` file stored inside your home directory. Next, it creates an environment variable called `TWITTER_PAT` that points to this file and store the environment variable in the default `.Renviron` file that will be loaded by R whenever R is started. 
-- It is possible to customize the path to the token file (maybe save it to a specific directory) and `TWITTER_PAT`
-- When the `rtweet` library is loaded, `TWITTER_PAT` will be read and all subsequent streaming calls to Twitter will be validated automatically. 
+if (Sys.info()['sysname'] == 'Windows'){
+  download.file('https://drive.google.com/a/g.clemson.edu/uc?authuser=1&id=0B1cRCY8U8bTcM2ZsSS1CclROOGc&export=download',
+                file.path('bin','phantomjs.exe'),
+                mode='wb')
+}
+
+
+```
