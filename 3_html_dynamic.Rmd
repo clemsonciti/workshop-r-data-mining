@@ -15,7 +15,7 @@ rm(list = ls())
 getwd()
 ```
 
-### Dynamic Web Sites
+## Dynamic Web Sites
 
 Let's look at the example of mining a search page, in this case, `my.clemson.edu`. Using skills from the previous module, I can do the following:
 
@@ -58,7 +58,7 @@ write_xml(search_results, file=file.path(data_dir,
 ```
 
 
-### Headless browser:
+## Headless browser:
 
 Emulate a web browser to avoid being seen as a 'robot' by websites. This enables the crawler to fully load all
 relevant data. 
@@ -93,4 +93,11 @@ writeLines(lines, js_output)
 system(paste0("bin/phantomjs ", js_output))
 ```
 
+** Challenge **
 
+Examine the following page: https://my.clemson.edu/#/directory/advanced-search and answer the following questions:
+- How many majors do Clemson University offer in total?
+
+```{r}
+
+```
