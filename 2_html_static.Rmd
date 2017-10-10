@@ -37,6 +37,7 @@ We need to wrap the data mining process in a loop whose stopping condition is Ye
 library(xml2)
 ```
 
+## Exploration of the target website
 
 ```{r}
 url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
@@ -127,10 +128,7 @@ list_rev[[6]][[1]]
 str(as_list(current_revs))
 ```
 
-The above shows us the potential structure for a data frame's headers, and for an SQL table's column information. 
-
-Next, we will need to look at stopping conditions when crawling through all the remaining review pages
-
+The above shows us the potential structure for a data frame's headers. Next, we will need to look at stopping conditions when crawling through all the remaining review pages
 
 ```{r}
 page_info <- xml_find_first(current_review, "//div[@class='page-of-pages arrange_unit arrange_unit--fill']")
@@ -158,8 +156,8 @@ page_count <- as.numeric(strsplit(text_page_count," ")[[1]][4])
 print (page_count)
 ```
 
-Let's start the crawling process:
-- To test the crawling process, we first try this out by mining the list of reviewers' names
+## Start the mining process:
+- To test the mining process, we first try this out by mining the list of reviewers' names
 
 
 ```{r}
@@ -238,4 +236,124 @@ for (i in 1:___){
 
 avg_rating <- ______
 print (paste0('Average Rating: ',avg_rating))
+```
+
+## Separation of mining and analyzing
+
+As you are working on a research project, it is often easy to go on a roll and start applying analytical tasks to data elements as soon as they come in. However, as we mine data from online sources, such workflows will run the following risks:
+
+- It is possible that newly arrived data elements can contain new conditions that have not been accounted for previously. This can lead to either incorrect analysis or program crashes. 
+- It is possible that something wrong can happen with the data mining pipeline (loss of connection due to various reasons). This can lead to incomplete analysis or program crashes. 
+
+In practice, what we want to do is to completely separate the data mining and data analyzing processes. Storage is no longer a critical issue, given what is available to researchers on campus (Google Drive (1TB), Palmetto, Cypress). 
+
+** Data mining **
+
+```{r}
+library(rvest)
+
+url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
+url_suffix <- ''
+start_index <- 0
+
+current_review <- read_html(url_prefix)
+page_info <- xml_find_first(current_review, "//div[@class='page-of-pages arrange_unit arrange_unit--fill']")
+text_page_count <- xml_text(page_info, trim=TRUE)
+page_count <- as.numeric(strsplit(text_page_count," ")[[1]][4])
+
+data_dir <- 'data'
+static_data_dir <- 'static_data'
+restaurant_dir <- 'emerils'
+
+if (!file.exists(file.path(data_dir, static_data_dir, restaurant_dir))){
+    dir.create(file.path(data_dir, static_data_dir, restaurant_dir), recursive = TRUE)
+    print ('Create directory static_data under data')
+} else {
+    print ("Directory already exists")
+}
+
+for (i in 1:page_count){
+    url_current <- paste(url_prefix, url_suffix, sep='')
+    current_page <- read_html(url_current)
+    write_html(current_page,
+               file = file.path(data_dir,
+                                static_data_dir,
+                                restaurant_dir,
+                                paste0(start_index,'.html')),
+               options = 'as_html')
+    print (url_current)
+    start_index <- start_index + 20
+    url_suffix <- paste0('?start=',start_index)
+    # be courteous to your source:
+    sleep_time <- sample(2:6,1)
+    print (sleep_time)
+    Sys.sleep(sleep_time)
+}
+```
+
+** Data analytics **
+
+Since the analytic portion is done on offline data, it is possible to generate new counters that are no longer dependent on the online source. 
+
+```{r}
+list_authors <- c()
+input_files <- list.files(file.path(data_dir,
+                                static_data_dir,
+                                restaurant_dir),
+                          full.names = TRUE)
+
+file_names <- list.files(file.path(data_dir,
+                                static_data_dir,
+                                restaurant_dir))
+
+for (i in 1:2){
+    current_page <- read_html(input_files[i])
+    current_revs <- xml_find_all(current_page, "//div[@itemprop='review']")
+    list_revs <- as_list(current_revs)
+    count_revs <- length(list_revs)
+    print (paste0('Page ', file_names[i], ' has ', count_revs, ' reviews.'))
+    for (j in 1:count_revs){
+        author_name <- attr(list_revs[[j]][[2]],'content')
+        list_authors <- c(list_authors, author_name)
+    }
+}
+print (unique(list_authors))
+```
+
+In this case, the construction of file names is an issue due to alphabetical sorting of file names. When mining from online data sources, relying on numerical count (pages) to distinguish data is the most straightforward approach. To avoid the numeric-character issue with file names, we can do the following:
+
+```{r}
+input_files <- list.files(file.path(data_dir,
+                                static_data_dir,
+                                restaurant_dir),
+                          full.names = TRUE)
+
+file_names <- list.files(file.path(data_dir,
+                                static_data_dir,
+                                restaurant_dir))
+
+max_letter <- 0
+for (i in 1:length(file_names)){
+  name_prefix <- strsplit(file_names[i], split = '.', fixed = TRUE)[[1]][1]
+  name_suffix <- strsplit(file_names[i], split = '.', fixed = TRUE)[[1]][2]
+  if (max_letter < nchar(name_prefix)) {
+    max_letter <- nchar(name_prefix)
+  }
+}
+
+for (i in 1:length(file_names)){
+  name_prefix <- as.numeric(strsplit(file_names[i], split = '.', fixed = TRUE)[[1]][1])
+  name_suffix <- strsplit(file_names[i], split = '.', fixed = TRUE)[[1]][2]
+  print (name_prefix)
+  new_name <- paste0(formatC(name_prefix,width=max_letter,flag='0'),
+                     '.',
+                     name_suffix)
+  print (new_name)
+  file.rename(input_files[i],
+              file.path(data_dir,
+                        static_data_dir,
+                        restaurant_dir,
+                        new_name))
+}
+
 ```

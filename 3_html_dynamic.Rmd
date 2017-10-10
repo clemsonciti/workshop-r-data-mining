@@ -17,7 +17,7 @@ getwd()
 
 ### Dynamic Web Sites
 
-I want to mine a search page, in this case, `my.clemson.edu`.Using skills from the previous module, I can do the following:
+Let's look at the example of mining a search page, in this case, `my.clemson.edu`. Using skills from the previous module, I can do the following:
 
 Set up output directory:
 
