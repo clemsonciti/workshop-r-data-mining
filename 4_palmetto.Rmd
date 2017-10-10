@@ -37,10 +37,10 @@ if (!file.exists(file.path(data_dir, ncses_institution_profiles_dir))){
     print ("Directory already exists")
 }
 
-url_prefix <- 'https://ncsesdata.nsf.gov/profiles/site?method=download&fice='
+url_prefix <- 'https://github.com/clemsonciti/data-mining-r-workshop/raw/master/samples/ncses_institution_profiles/'
 
 for (i in 1:nrow(df_institutions)){
-    full_url <- paste(url_prefix, df_institutions$FICE[i],sep='')
+    full_url <- paste(url_prefix, df_institutions$FICE[i],'.zip',sep='')
     institution <- paste(df_institutions$FICE[i],df_institutions$Institutions[i],sep='_')
     institution <- gsub(" ", "_", institution, fixed = TRUE)
     institution <- paste(institution,'.zip',sep='')

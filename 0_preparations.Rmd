@@ -1,10 +1,10 @@
 
-## 1. Installing packages: `RCurl`, `xml2`, `RJSONIO`, `RSQLite`, `stringr`, `readxl`, `rvest`
+## 1. Installing packages: `RCurl`, `stringr`, `rvest`
 
 Inside the R prompt, run the following command
 
 ```{r}
-package_list <- c('XML','rtweet','RCurl','xml2','RJSONIO','RSQLite','stringr','readxl')
+package_list <- c('RCurl','stringr','rvest')
 install.packages(package_list)
 ```
 
@@ -13,12 +13,8 @@ You can test that all packages are installed and usable by load them all and che
 
 ```{r}
 library(RCurl)
-library(XML)
-library(xml2)
-library(RJSONIO)
-library(RSQLite)
 library(stringr)
-library(readxl)
+library(rvest)
 sessionInfo()
 ```
 
@@ -36,7 +32,14 @@ if (Sys.info()['sysname'] == 'Windows'){
   download.file('https://drive.google.com/a/g.clemson.edu/uc?authuser=1&id=0B1cRCY8U8bTcM2ZsSS1CclROOGc&export=download',
                 file.path('bin','phantomjs.exe'),
                 mode='wb')
+} else if (Sys.info()['sysname'] == 'Linux'){
+  download.file('https://drive.google.com/a/g.clemson.edu/uc?export=download&confirm=2CrO&id=0B1cRCY8U8bTcLVFpdVRWLUk4eGM',
+                file.path('bin','phantomjs'),
+                mode='wb')
+} else { # probably MacOSX
+  download.file('https://drive.google.com/a/g.clemson.edu/uc?authuser=1&id=0B1cRCY8U8bTcQS1sZElJZE1VOVE&export=download',
+                file.path('bin','phantomjs'),
+                mode='wb')
 }
-
 
 ```
