@@ -18,10 +18,10 @@ getwd()
 We will be using Yelp in this module:
 
 Recaling Yelp's URL patterns from notebook 1:
-- https://www.yelp.com/biz/emerils-new-orleans-new-orleans
-- https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=20
-- https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=40
-- https://www.yelp.com/biz/emerils-new-orleans-new-orleans?start=60
+- https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson
+- https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson?start=20
+- https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson?start=40
+- https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson?start=60
 - ...
 
 **Important:** We do not know when the additional pages will stop. We could go to the last page, but that only works for sometimes, as there will be more reviews in the future. 
@@ -40,15 +40,10 @@ library(xml2)
 ## Exploration of the target website
 
 ```{r}
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
+url_prefix <- 'https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson'
 
 current_review <- read_html(url_prefix)
 print (current_review)
-```
-
-
-```{r}
-xml_structure(current_review)
 ```
 
 In many cases, looking at just the structure of an HTML page does not help, because you cannot associate the structure's names with the actual relevant contents. Looking at the source of the page can yield better results
@@ -125,7 +120,7 @@ list_rev[[6]][[1]]
 
 
 ```{r}
-str(as_list(current_revs))
+str(as_list(current_revs[[1]]))
 ```
 
 The above shows us the potential structure for a data frame's headers. Next, we will need to look at stopping conditions when crawling through all the remaining review pages
@@ -161,7 +156,7 @@ print (page_count)
 
 
 ```{r}
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
+url_prefix <- 'https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson'
 url_suffix <- ''
 start_index <- 0
 list_authors <- c()
@@ -252,7 +247,7 @@ In practice, what we want to do is to completely separate the data mining and da
 ```{r}
 library(rvest)
 
-url_prefix <- 'https://www.yelp.com/biz/emerils-new-orleans-new-orleans'
+url_prefix <- 'https://www.yelp.com/biz/blue-heron-restaurant-and-sushi-bar-clemson'
 url_suffix <- ''
 start_index <- 0
 
@@ -263,7 +258,7 @@ page_count <- as.numeric(strsplit(text_page_count," ")[[1]][4])
 
 data_dir <- 'data'
 static_data_dir <- 'static_data'
-restaurant_dir <- 'emerils'
+restaurant_dir <- 'blue-heron'
 
 if (!file.exists(file.path(data_dir, static_data_dir, restaurant_dir))){
     dir.create(file.path(data_dir, static_data_dir, restaurant_dir), recursive = TRUE)
